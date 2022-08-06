@@ -10,7 +10,9 @@ project "Sandbox"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"%{IncludeDir.nfd}/nfd.hpp",
+		"%{IncludeDir.nfd}/nfd.h"
 	}
 
 	includedirs
@@ -19,21 +21,28 @@ project "Sandbox"
 		"%{wks.location}/Hazel/src",
 		"%{wks.location}/Hazel/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.nfd}"
 	}
 
 	links
 	{
-		"Hazel"
+		"Hazel", "Box2d", "GLFW", "Glad", "ImGui", "nfd"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 
+	filter "system:linux"
+		links { "GL", "X11", "dbus-1" }
+		libdirs { "/usr/lib" }
+		removefiles { "%{wks.location}/Hazel/vendor/nativefiledialog-extended/src/nfd_gtk.cpp" }
+
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links { "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}" }
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"

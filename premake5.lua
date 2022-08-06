@@ -1,4 +1,4 @@
-include "./vendor/premake/premake_customization/solution_items.lua"
+-- include "./vendor/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 
 workspace "Hazel"
@@ -12,10 +12,10 @@ workspace "Hazel"
 		"Dist"
 	}
 
-	solution_items
+	--[[ solution_items
 	{
 		".editorconfig"
-	}
+	} ]]
 
 	flags
 	{
@@ -25,12 +25,13 @@ workspace "Hazel"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
-	include "vendor/premake"
+	--include "vendor/premake"
 	include "Hazel/vendor/Box2D"
 	include "Hazel/vendor/GLFW"
 	include "Hazel/vendor/Glad"
 	include "Hazel/vendor/imgui"
 	include "Hazel/vendor/yaml-cpp"
+	--include "Hazel/vendor"
 group ""
 
 include "Hazel"

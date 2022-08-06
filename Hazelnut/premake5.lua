@@ -10,7 +10,9 @@ project "Hazelnut"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"%{IncludeDir.nfd}/nfd.hpp",
+		"%{IncludeDir.nfd}/nfd.h"
 	}
 
 	includedirs
@@ -20,21 +22,27 @@ project "Hazelnut"
 		"%{wks.location}/Hazel/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.nfd}"
 	}
 
 	links
 	{
-		"Hazel"
+		"Hazel", "Box2d", "GLFW", "Glad", "ImGui", "yaml-cpp", "nfd"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
+	
+	filter "system:linux"
+		links { "GL", "X11", "dbus-1" }
+		libdirs { "/usr/lib" }
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links { "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}" }
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"

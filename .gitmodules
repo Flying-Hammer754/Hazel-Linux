@@ -23,3 +23,6 @@
 [submodule "Hazel/vendor/Box2D"]
 	path = Hazel/vendor/Box2D
 	url = https://github.com/thecherno/box2d
+[submodule "Hazel/vendor/nativefiledialog-extended"]
+	path = Hazel/vendor/nativefiledialog-extended
+	url = https://github.com/btzy/nativefiledialog-extended.git

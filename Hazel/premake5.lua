@@ -18,6 +18,7 @@ project "Hazel"
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
+		"%{IncludeDir.nfd}/*",
 
 		"vendor/ImGuizmo/ImGuizmo.h",
 		"vendor/ImGuizmo/ImGuizmo.cpp"
@@ -42,7 +43,8 @@ project "Hazel"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.VulkanSDK}"
+		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.nfd}"
 	}
 
 	links
@@ -52,6 +54,7 @@ project "Hazel"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
+		"nfd",
 		"opengl32.lib"
 	}
 
@@ -64,9 +67,12 @@ project "Hazel"
 		defines
 		{
 		}
+	filter "system:linux"
+		--files { "vendor/nativefiledialog-extended/src/nfd_portal.cpp" }
+		links { "GL", "X11", "dbus-1" }
 
 	filter "configurations:Debug"
-		defines "HZ_DEBUG"
+		defines { "HZ_DEBUG", "HZ_ENABLE_ASSERTS" }
 		runtime "Debug"
 		symbols "on"
 

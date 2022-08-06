@@ -6,10 +6,15 @@
 #include <glad/glad.h>
 
 #include <glm/gtc/type_ptr.hpp>
-
+#ifdef HZ_PLATFORM_WINDOWS
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_cross.hpp>
 #include <spirv_cross/spirv_glsl.hpp>
+#else
+#include <spirv_cross.hpp>
+#include <spirv_glsl.hpp>
+#include <shaderc.hpp>
+#endif
 
 namespace Hazel {
 

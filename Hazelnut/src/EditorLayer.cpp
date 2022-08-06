@@ -23,6 +23,8 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
+		FileDialogs::Init();
+
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
 		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
@@ -52,6 +54,8 @@ namespace Hazel {
 	void EditorLayer::OnDetach()
 	{
 		HZ_PROFILE_FUNCTION();
+
+		FileDialogs::Deinit();
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -532,7 +536,8 @@ namespace Hazel {
 
 	void EditorLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		nfdfilteritem_t filter = { "Hazel Scene", "hazel" };
+		std::string filepath = FileDialogs::OpenFile(&filter, 1); //FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 			OpenScene(filepath);
 	}
@@ -571,7 +576,8 @@ namespace Hazel {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::string filepath = FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		nfdfilteritem_t filter = { "Hazel Scene", ".hazel" };
+		std::string filepath = FileDialogs::SaveFile(&filter, 1); //FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 		{
 			SerializeScene(m_ActiveScene, filepath);
