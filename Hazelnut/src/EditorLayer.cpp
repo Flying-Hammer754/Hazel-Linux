@@ -576,7 +576,7 @@ namespace Hazel {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		nfdfilteritem_t filter = { "Hazel Scene", ".hazel" };
+		nfdfilteritem_t filter = { "Hazel Scene", "hazel" };
 		std::string filepath = FileDialogs::SaveFile(&filter, 1); //FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 		{

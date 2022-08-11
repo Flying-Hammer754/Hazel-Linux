@@ -25,7 +25,7 @@ namespace Hazel {
 
 	std::string FileDialogs::OpenFile(nfdfilteritem_t* filter, uint32_t count, nfdchar_t* defaultPath)
 	{
-		nfdchar_t* outPath;
+		nfdchar_t* outPath = "";
 		HZ_CORE_ASSERT(NFD::OpenDialog(outPath, filter, count, defaultPath) != NFD_ERROR, "nfd file open failed!")
 		std::string result = outPath;
 		return result;
@@ -53,7 +53,7 @@ namespace Hazel {
 
 	std::string FileDialogs::SaveFile(nfdfilteritem_t* filter, uint32_t count, nfdchar_t* defaultPath, nfdchar_t* defaultName)
 	{
-		nfdchar_t* outPath;
+		nfdchar_t* outPath = "";
 		HZ_CORE_ASSERT(NFD::SaveDialog(outPath, filter, count, defaultPath, defaultName) != NFD_ERROR, "nfd file save failed!")
 		std::string result = outPath;
 		return result;

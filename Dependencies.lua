@@ -40,15 +40,14 @@ filter "system:linux"
     IncludeDir["VulkanSDK"] = "/usr/include/vulkan"
     IncludeDir["shaderc"] = "/usr/include/shaderc"
     IncludeDir["SPIRV_Cross"] = "/usr/include/spirv_cross"
-    includedirs { "%{IncludeDir.shaderc}", "%{IncludeDir.SPIRV_Cross}" }
     Library["Vulkan"] = "/usr/lib/libvulkan"
 
-    libdirs { "/usr/lib" }
-    Library["ShaderC_Debug"] = "shaderc_shared"
-    Library["SPIRV_Cross_Debug"] = "spirv-cross-core"
-    Library["SPIRV_Cross_GLSL_Debug"] = "spirv-cross-glsl"
-    Library["SPIRV_Tools_Debug"] = "SPIRV-Tools-shared"
+    libdirs { "/usr/lib", "/usr/local/lib" }
+    Library["ShaderC_Debug"] = "shaderc:static"
+    Library["SPIRV_Cross_Debug"] = "spirv-cross-core:static"
+    Library["SPIRV_Cross_GLSL_Debug"] = "spirv-cross-glsl:static"
+    Library["SPIRV_Tools_Debug"] = "SPIRV-Tools"
 
-    Library["ShaderC_Release"] = "/usr/lib/shaderc_shared"
-    Library["SPIRV_Cross_Release"] = "/usr/lib/spirv-cross-core"
-    Library["SPIRV_Cross_GLSL_Release"] = "/usr/lib/spirv-cross-glsl"
+    Library["ShaderC_Release"] = "shaderc:static"
+    Library["SPIRV_Cross_Release"] = "spirv-cross-core:static"
+    Library["SPIRV_Cross_GLSL_Release"] = "spirv-cross-glsl:static"

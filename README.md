@@ -7,6 +7,16 @@ Hazel is primarily an early-stage interactive application and rendering engine f
 ***
 
 ## Getting Started
+<b>Linux Steps:</b>
+1. Install some dependencies with these commands:
+   ### Arch Linux:
+   <b>spirv-cross:</b>(`sudo pacman -S --needed base-devel gcc-libs cmake git python`, Clone the AUR: `git clone https://aur.archlinux.org/spirv-cross.git tmp/spirv-cross && cd tmp/spirv-cross`, Build & Install the AUR: `makepkg -s -i -c`, optional: `cd ../.. && rm -r tmp/spirv-cross`) <b>shaderc:</b> (`sudo pacman -S --needed shaderc`) <b>premake:</b> (`sudo pacman -S --needed premake`) <b>vulkan:</b> (`sudo pacman -S --needed vulkan-headers vulkan-tools`)
+   ### Ubuntu:
+   <b>spirv-cross:</b> Prerequisites: `sudo apt-get install cmake git gcc g++`, Clone SPIRV-Cross: `git clone https://github.com/KhronosGroup/SPIRV-Cross.git spirv-cross`, Build SPIRV-Cross: `cd spirv-cross && cmake -Bbuild && cd build && make && sudo cp libspirv-cross-core.a libspirv-cross-glsl.a /usr/local/lib && sudo cp ../spirv_cross.hpp ../spirv_glsl.hpp /usr/local/include` <b>shaderc:</b> Clone Shaderc:`git clone https://github.com/google/shaderc.git shaderc && cd shaderc && ./utils/git-sync-deps`, Build Shaderc: `cmake -Bbuild -DCMAKE_BUILD_TYPE=Release && cd build && make && sudo cp libshaderc/libshaderc.a /usr/local/lib && sudo cp ../libshaderc/include/shaderc/shaderc.hpp /usr/local/include` <b>premake5:</b> Download premake at https://premake.github.io/download and place it in the Downloads folder, extract it and run this command: `cd Downloads && sudo mv premake5 /usr/local/bin/premake5`
+2. Download & Compile Hazel:
+   ### Arch Linux:
+   <b>Clone the repository:</b> `git clone --recursive https://github.com/Flying-Hammer754/Hazel-Linux.git Hazel-Linux`, <b>Compile:</b> `cd Hazel-Linux && premake5 gmake2 && make` <b>Run:</b> `cd Hazelnut && ../bin/Debug-linux-x86_64/Hazelnut/Hazelnut`
+
 Visual Studio 2017 or 2019 is recommended, Hazel is officially untested on other development environments whilst we focus on a Windows build.
 
 <ins>**1. Downloading the repository:**</ins>
