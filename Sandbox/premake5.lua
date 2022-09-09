@@ -42,7 +42,7 @@ project "Sandbox"
 		defines "HZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
-		links { "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}" }
+		links { "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}", "%{Library.SPIRV_Tools_opt}", "%{Library.glslang}", "%{Library.glslang_code_gen}", "%{Library.glslang_machine_independent}", "%{Library.SPIRV_Cross_Util}", "%{Library.glslang_spirv}", "%{Library.glslang_default_resource_limits}", "%{Library.glslang_os_dependent}", "%{Library.SPVRemapper}", "%{Library.glslang_ogl_compiler}", "%{Library.glslang_hlsl}", "%{Library.SPIRV_Cross_HLSL}", "pthread" }
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"

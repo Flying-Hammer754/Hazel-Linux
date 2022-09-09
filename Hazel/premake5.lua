@@ -44,7 +44,9 @@ project "Hazel"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.nfd}"
+		"%{IncludeDir.nfd}",
+		"%{IncludeDir.SPIRV_Cross}",
+		"%{IncludeDir.shaderc}"
 	}
 
 	links
@@ -69,7 +71,7 @@ project "Hazel"
 		}
 	filter "system:linux"
 		--files { "vendor/nativefiledialog-extended/src/nfd_portal.cpp" }
-		links { "GL", "X11", "dbus-1" }
+		links { "GL", "X11", "dbus-1", "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}", "%{Library.SPIRV_Tools_opt}", "%{Library.glslang}", "%{Library.glslang_code_gen}", "%{Library.glslang_machine_independent}", "%{Library.SPIRV_Cross_Util}", "%{Library.glslang_spirv}", "%{Library.glslang_default_resource_limits}", "%{Library.glslang_os_dependent}", "%{Library.SPVRemapper}", "%{Library.glslang_ogl_compiler}", "%{Library.glslang_hlsl}", "%{Library.SPIRV_Cross_HLSL}", "pthread" }
 
 	filter "configurations:Debug"
 		defines { "HZ_DEBUG", "HZ_ENABLE_ASSERTS" }
@@ -79,6 +81,9 @@ project "Hazel"
 		links
 		{
 			"%{Library.ShaderC_Debug}",
+			"%{Library.SPIRV_Tools_Debug}",
+			"%{Library.SPIRV-Tools-opt",
+			"%{Library.glslang}",
 			"%{Library.SPIRV_Cross_Debug}",
 			"%{Library.SPIRV_Cross_GLSL_Debug}"
 		}
