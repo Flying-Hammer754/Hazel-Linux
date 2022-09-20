@@ -25,10 +25,10 @@ namespace Hazel {
 
 		FileDialogs::Init();
 
-		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
-		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		m_CheckerboardTexture = Texture2D::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/textures/Checkerboard.png");
+		m_IconPlay = Texture2D::Create(Application::Get().GetSpecification().WorkingDirectory + "Resources/Icons/PlayButton.png");
+		m_IconSimulate = Texture2D::Create(Application::Get().GetSpecification().WorkingDirectory + "Resources/Icons/SimulateButton.png");
+		m_IconStop = Texture2D::Create(Application::Get().GetSpecification().WorkingDirectory + "Resources/Icons/StopButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -40,9 +40,9 @@ namespace Hazel {
 		m_ActiveScene = m_EditorScene;
 
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
-		if (commandLineArgs.Count > 1)
+		if (commandLineArgs.Count > 3)
 		{
-			auto sceneFilePath = commandLineArgs[1];
+			auto sceneFilePath = commandLineArgs[3];
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(sceneFilePath);
 		}
@@ -253,7 +253,9 @@ namespace Hazel {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
-				OpenScene(std::filesystem::path(g_AssetPath) / path);
+				std::wstring ws = path;
+				ws.erase(ws.end() - 1);
+				OpenScene(std::filesystem::path(g_AssetPath) / ws.c_str());
 			}
 			ImGui::EndDragDropTarget();
 		}

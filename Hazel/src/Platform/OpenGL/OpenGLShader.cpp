@@ -15,6 +15,7 @@
 #include <spirv_glsl.hpp>
 #include <shaderc.hpp>
 #endif
+#include "Hazel/Core/Application.h"
 
 namespace Hazel {
 
@@ -53,10 +54,14 @@ namespace Hazel {
 			return nullptr;
 		}
 
+		static std::string cachedir;
+
 		static const char* GetCacheDirectory()
 		{
 			// TODO: make sure the assets directory is valid
-			return "assets/cache/shader/opengl";
+			cachedir = Application::Get().GetSpecification().SettingsDirectory;
+			cachedir += "assets/cache/shader/opengl";
+			return cachedir.c_str();
 		}
 
 		static void CreateCacheDirectoryIfNeeded()

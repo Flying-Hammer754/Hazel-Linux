@@ -19,12 +19,24 @@ public:
 	}
 };
 
-Hazel::Application* Hazel::CreateApplication(Hazel::ApplicationCommandLineArgs args)
+Hazel::Application* Hazel::CreateApplication(Hazel::ApplicationCommandLineArgs args, const std::string& configDir)
 {
 	ApplicationSpecification spec;
 	spec.Name = "Sandbox";
-	spec.WorkingDirectory = "../Hazelnut";
+	spec.WorkingDirectory = "../Hazelnut/";
+	spec.SettingsDirectory = configDir;
 	spec.CommandLineArgs = args;
+	if (args.Count > 3)
+	{
+		std::string argv3 = args[3];
+		if (argv3 == "--apphelp")
+		{
+			printf(R"apphelpmsg(--- Application help message: ---
+	-  Sandbox does not use <Application Specific Arguments>
+--- ----------- ---- -------- ---)apphelpmsg");
+			return nullptr;
+		}
+	}
 
 	return new Sandbox(spec);
 }

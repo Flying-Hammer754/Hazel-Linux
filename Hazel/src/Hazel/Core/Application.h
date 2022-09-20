@@ -31,6 +31,7 @@ namespace Hazel {
 	{
 		std::string Name = "Hazel Application";
 		std::string WorkingDirectory;
+		std::string SettingsDirectory;
 		ApplicationCommandLineArgs CommandLineArgs;
 	};
 

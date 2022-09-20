@@ -16,7 +16,7 @@ namespace Hazel {
 	class Log
 	{
 	public:
-		static void Init();
+		static void Init(const std::string& settingsDir);
 
 		static Ref<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }
 		static Ref<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }

@@ -20,6 +20,8 @@ namespace Hazel {
 	{
 	}
 
+	static std::string iniSaveFileLocation;
+
 	void ImGuiLayer::OnAttach()
 	{
 		HZ_PROFILE_FUNCTION();
@@ -36,8 +38,14 @@ namespace Hazel {
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
 		float fontSize = 18.0f;// *2.0f;
-		io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF((Application::Get().GetSpecification().WorkingDirectory +
+		"assets/fonts/opensans/OpenSans-Bold.ttf").c_str(), fontSize);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF((Application::Get().GetSpecification().WorkingDirectory +
+		"assets/fonts/opensans/OpenSans-Regular.ttf").c_str(), fontSize);
+
+		iniSaveFileLocation = Application::Get().GetSpecification().SettingsDirectory;
+		iniSaveFileLocation += "imgui.ini";
+		io.IniFilename = iniSaveFileLocation.c_str();
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
