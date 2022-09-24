@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Hazel/Audio/AudioLibrary.h"
+
 Sandbox2D::Sandbox2D()
 	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 {
@@ -14,11 +16,18 @@ void Sandbox2D::OnAttach()
 	HZ_PROFILE_FUNCTION();
 
 	m_CheckerboardTexture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
+	Hazel::AudioLibrary::Init();
+	Hazel::AudioLibrary::CreateSoundBuffer("assets/audio/test.wav", 0);
+	Hazel::AudioLibrary::CreateSoundSource(0, 0);
+	Hazel::AudioLibrary::SetSourceLooping(0, true);
+	Hazel::AudioLibrary::SetSourceVolume(0, 0.3f);
+	Hazel::AudioLibrary::PlaySource(0);
 }
 
 void Sandbox2D::OnDetach()
 {
 	HZ_PROFILE_FUNCTION();
+	Hazel::AudioLibrary::Shutdown();
 }
 
 void Sandbox2D::OnUpdate(Hazel::Timestep ts)
@@ -27,6 +36,10 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 
 	// Update
 	m_CameraController.OnUpdate(ts);
+	if (Hazel::Input::IsKeyPressed(Hazel::Key::D0))
+	{
+		Hazel::AudioLibrary::StopSource(0);
+	}
 
 	// Render
 	Hazel::Renderer2D::ResetStats();

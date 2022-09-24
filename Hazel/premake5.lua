@@ -46,7 +46,8 @@ project "Hazel"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.nfd}",
 		"%{IncludeDir.SPIRV_Cross}",
-		"%{IncludeDir.shaderc}"
+		"%{IncludeDir.shaderc}",
+		"%{IncludeDir.openal_soft}"
 	}
 
 	links
@@ -57,7 +58,8 @@ project "Hazel"
 		"ImGui",
 		"yaml-cpp",
 		"nfd",
-		"opengl32.lib"
+		"opengl32.lib",
+		"openal-soft"
 	}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
@@ -71,7 +73,7 @@ project "Hazel"
 		}
 	filter "system:linux"
 		--files { "vendor/nativefiledialog-extended/src/nfd_portal.cpp" }
-		links { "GL", "X11", "dbus-1", "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}", "%{Library.SPIRV_Tools_opt}", "%{Library.glslang}", "%{Library.glslang_code_gen}", "%{Library.glslang_machine_independent}", "%{Library.SPIRV_Cross_Util}", "%{Library.glslang_spirv}", "%{Library.glslang_default_resource_limits}", "%{Library.glslang_os_dependent}", "%{Library.SPVRemapper}", "%{Library.glslang_ogl_compiler}", "%{Library.glslang_hlsl}", "%{Library.SPIRV_Cross_HLSL}", "pthread" }
+		links { "sndfile", "GL", "X11", "dbus-1", "%{Library.ShaderC_Debug}", "%{Library.SPIRV_Cross_Debug}", "%{Library.SPIRV_Cross_GLSL_Debug}", "%{Library.SPIRV_Tools_Debug}", "%{Library.SPIRV_Tools_opt}", "%{Library.glslang}", "%{Library.glslang_code_gen}", "%{Library.glslang_machine_independent}", "%{Library.SPIRV_Cross_Util}", "%{Library.glslang_spirv}", "%{Library.glslang_default_resource_limits}", "%{Library.glslang_os_dependent}", "%{Library.SPVRemapper}", "%{Library.glslang_ogl_compiler}", "%{Library.glslang_hlsl}", "%{Library.SPIRV_Cross_HLSL}", "pthread" }
 
 	filter "configurations:Debug"
 		defines { "HZ_DEBUG", "HZ_ENABLE_ASSERTS" }

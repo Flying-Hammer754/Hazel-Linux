@@ -22,19 +22,20 @@ project "Sandbox"
 		"%{wks.location}/Hazel/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.nfd}"
+		"%{IncludeDir.nfd}",
+		"%{IncludeDir.openal_soft}"
 	}
 
 	links
 	{
-		"Hazel", "Box2d", "GLFW", "Glad", "ImGui", "nfd"
+		"Hazel", "Box2d", "GLFW", "Glad", "ImGui", "nfd", "openal-soft"
 	}
 
 	filter "system:windows"
 		systemversion "latest"
 
 	filter "system:linux"
-		links { "GL", "X11", "dbus-1" }
+		links { "pulse", "pulse-simple", "pulse-mainloop-glib", "GL", "X11", "dbus-1", "rt", "dl", "m", "pthread", "sndfile" }
 		libdirs { "/usr/lib" }
 		removefiles { "%{wks.location}/Hazel/vendor/nativefiledialog-extended/src/nfd_gtk.cpp" }
 

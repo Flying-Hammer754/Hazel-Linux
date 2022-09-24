@@ -32,6 +32,7 @@ group "Dependencies"
 	include "Hazel/vendor/imgui"
 	include "Hazel/vendor/yaml-cpp"
 	include "Hazel/vendor"
+	include "Hazel/vendor/openal-soft"
 group ""
 
 include "Hazel"

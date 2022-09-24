@@ -26,3 +26,6 @@
 [submodule "Hazel/vendor/nativefiledialog-extended"]
 	path = Hazel/vendor/nativefiledialog-extended
 	url = https://github.com/btzy/nativefiledialog-extended.git
+[submodule "Hazel/vendor/openal-soft"]
+	path = Hazel/vendor/openal-soft
+	url = https://github.com/Flying-Hammer754/openal-soft.git
