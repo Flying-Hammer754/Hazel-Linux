@@ -16,6 +16,7 @@
 #include <shaderc.hpp>
 #endif
 #include "Hazel/Core/Application.h"
+#include "Platform/OpenGL/GLDebugMacros.h"
 
 namespace Hazel {
 
@@ -108,8 +109,16 @@ namespace Hazel {
 
 		{
 			Timer timer;
+			#ifdef HZ_USE_OPENGL_4_5
 			CompileOrGetVulkanBinaries(shaderSources);
 			CompileOrGetOpenGLBinaries();
+			#elif HZ_USE_OPENGL_3_3
+			for (auto&& [stage, spirv] : shaderSources)
+			{
+				m_OpenGLSourceCode[stage] = spirv;
+				m_OpenGLSPIRV[stage] = std::vector<uint32_t>();
+			}
+			#endif
 			CreateProgram();
 			HZ_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
 		}
@@ -140,7 +149,7 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glDeleteProgram(m_RendererID);
+		GL_CALL(glDeleteProgram(m_RendererID));
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
@@ -201,6 +210,7 @@ namespace Hazel {
 
 	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		#ifdef HZ_USE_OPENGL_4_5
 		GLuint program = glCreateProgram();
 
 		shaderc::Compiler compiler;
@@ -254,10 +264,12 @@ namespace Hazel {
 
 		for (auto&& [stage, data]: shaderData)
 			Reflect(stage, data);
+		#endif
 	}
 
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
 	{
+		#ifdef HZ_USE_OPENGL_4_5
 		auto& shaderData = m_OpenGLSPIRV;
 
 		shaderc::Compiler compiler;
@@ -312,6 +324,7 @@ namespace Hazel {
 				}
 			}
 		}
+		#endif
 	}
 
 	void OpenGLShader::CreateProgram()
@@ -322,34 +335,52 @@ namespace Hazel {
 		for (auto&& [stage, spirv] : m_OpenGLSPIRV)
 		{
 			GLuint shaderID = shaderIDs.emplace_back(glCreateShader(stage));
+			#ifdef HZ_USE_OPENGL_3_3
+			const char* srcCode = m_OpenGLSourceCode[stage].c_str();
+			GL_CALL(glShaderSource(shaderID, 1, &srcCode, NULL));
+			GL_CALL(glCompileShader(shaderID));
+			int compiled;
+			GL_CALL(glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compiled));
+			if (compiled != GL_TRUE)
+			{
+				int logLength = 0;
+				char message[1024];
+				GL_CALL(glGetShaderInfoLog(shaderID, 1024, &logLength, message));
+				HZ_CORE_ERROR("GL {0} Shader ({1}) Error: {2} {3}", (stage == GL_VERTEX_SHADER ? "Vertex" : "Fragment" ), m_FilePath, message, m_OpenGLSourceCode[stage]);
+				HZ_CORE_ASSERT(false);
+			}
+			#elif HZ_USE_OPENGL_4_5
 			glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, spirv.data(), spirv.size() * sizeof(uint32_t));
 			glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
-			glAttachShader(program, shaderID);
+			#endif
+			GL_CALL(glAttachShader(program, shaderID));
 		}
 
-		glLinkProgram(program);
+		GL_CALL(glLinkProgram(program));
 
 		GLint isLinked;
-		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+		GL_CALL(glGetProgramiv(program, GL_LINK_STATUS, &isLinked));
 		if (isLinked == GL_FALSE)
 		{
 			GLint maxLength;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+			GL_CALL(glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength));
 
 			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data());
+			GL_CALL(glGetProgramInfoLog(program, maxLength, &maxLength, infoLog.data()));
 			HZ_CORE_ERROR("Shader linking failed ({0}):\n{1}", m_FilePath, infoLog.data());
 
-			glDeleteProgram(program);
+			GL_CALL(glDeleteProgram(program));
 
 			for (auto id : shaderIDs)
-				glDeleteShader(id);
+			{
+				GL_CALL(glDeleteShader(id));
+			}
 		}
 
 		for (auto id : shaderIDs)
 		{
-			glDetachShader(program, id);
-			glDeleteShader(id);
+			GL_CALL(glDetachShader(program, id));
+			GL_CALL(glDeleteShader(id));
 		}
 
 		m_RendererID = program;
@@ -381,16 +412,12 @@ namespace Hazel {
 
 	void OpenGLShader::Bind() const
 	{
-		HZ_PROFILE_FUNCTION();
-
-		glUseProgram(m_RendererID);
+		GL_CALL(glUseProgram(m_RendererID));
 	}
 
 	void OpenGLShader::Unbind() const
 	{
-		HZ_PROFILE_FUNCTION();
-
-		glUseProgram(0);
+		GL_CALL(glUseProgram(0));
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
@@ -442,50 +469,50 @@ namespace Hazel {
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform1i(location, value);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform1i(location, value));
 	}
 
 	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform1iv(location, count, values);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform1iv(location, count, values));
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& name, float value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform1f(location, value);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform1f(location, value));
 	}
 
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform2f(location, value.x, value.y);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform2f(location, value.x, value.y));
 	}
 
 	void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform3f(location, value.x, value.y, value.z);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform3f(location, value.x, value.y, value.z));
 	}
 
 	void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniform4f(location, value.x, value.y, value.z, value.w);
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniform4f(location, value.x, value.y, value.z, value.w));
 	}
 
 	void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix)
 	{
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+		GL_CALL(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
+		GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix)));
 	}
 
 }

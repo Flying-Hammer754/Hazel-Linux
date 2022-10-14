@@ -18,7 +18,6 @@ project "Hazel"
 		"vendor/stb_image/**.cpp",
 		"vendor/glm/glm/**.hpp",
 		"vendor/glm/glm/**.inl",
-		"%{IncludeDir.nfd}/*",
 
 		"vendor/ImGuizmo/ImGuizmo.h",
 		"vendor/ImGuizmo/ImGuizmo.cpp"
@@ -27,7 +26,8 @@ project "Hazel"
 	defines
 	{
 		"_CRT_SECURE_NO_WARNINGS",
-		"GLFW_INCLUDE_NONE"
+		"GLFW_INCLUDE_NONE",
+		"HZ_USE_OPENGL_4_5",
 	}
 
 	includedirs
@@ -44,10 +44,8 @@ project "Hazel"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.nfd}",
 		"%{IncludeDir.SPIRV_Cross}",
-		"%{IncludeDir.shaderc}",
-		"%{IncludeDir.openal_soft}"
+		"%{IncludeDir.shaderc}"
 	}
 
 	links
@@ -57,10 +55,20 @@ project "Hazel"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"nfd",
-		"opengl32.lib",
-		"openal-soft"
+		"opengl32.lib"
 	}
+
+	filter { "not options:disable-file-dialogs" }
+	files { "%{IncludeDir.nfd}/*" }
+	includedirs { "%{IncludeDir.nfd}" }
+	links { "nfd" }
+	filter { "not options:disable-audio" }
+	files { "src/Hazel/Audio/*", "src/Platform/OpenAL/*" }
+	includedirs { "%{IncludeDir.openal_soft}" }
+	links { "openal-soft" }
+	filter { "options:disable-audio" }
+	removefiles { "src/Hazel/Audio/*", "src/Platform/OpenAL/*" }
+	filter {}
 
 	filter "files:vendor/ImGuizmo/**.cpp"
 	flags { "NoPCH" }

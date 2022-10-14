@@ -3,6 +3,9 @@
 
 #include <stb_image.h>
 
+#include "Hazel/Core/Application.h"
+#include "Platform/OpenGL/GLDebugMacros.h"
+
 namespace Hazel {
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
@@ -13,6 +16,17 @@ namespace Hazel {
 		m_InternalFormat = GL_RGBA8;
 		m_DataFormat = GL_RGBA;
 
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glGenTextures(1, &m_RendererID));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+		GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, m_InternalFormat, m_Width, m_Height, 0, m_DataFormat, GL_UNSIGNED_BYTE, nullptr));
+
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+		#elif HZ_USE_OPENGL_4_5
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
@@ -21,6 +35,7 @@ namespace Hazel {
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		#endif
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
@@ -59,7 +74,19 @@ namespace Hazel {
 			m_DataFormat = dataFormat;
 
 			HZ_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
+			#ifdef HZ_USE_OPENGL_3_3
+			GL_CALL(glGenTextures(1, &m_RendererID));
+			GL_CALL(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+			GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, nullptr));
+			
+			GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
+			GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+			GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+
+			GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data));
+			#elif HZ_USE_OPENGL_4_5
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
@@ -70,8 +97,13 @@ namespace Hazel {
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 			glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+			#endif
 
 			stbi_image_free(data);
+		}
+		else
+		{
+			HZ_CORE_ERROR("Failed to load texture! {0}", path);
 		}
 	}
 
@@ -79,7 +111,7 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glDeleteTextures(1, &m_RendererID);
+		GL_CALL(glDeleteTextures(1, &m_RendererID));
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
@@ -88,13 +120,23 @@ namespace Hazel {
 
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		HZ_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+		GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data));
+		#elif HZ_USE_OPENGL_4_5
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+		#endif
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		HZ_PROFILE_FUNCTION();
 
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
+		GL_CALL(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+		#elif HZ_USE_OPENGL_4_5
 		glBindTextureUnit(slot, m_RendererID);
+		#endif
 	}
 }

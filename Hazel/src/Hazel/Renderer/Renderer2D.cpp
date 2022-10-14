@@ -172,9 +172,15 @@ namespace Hazel {
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
+		#ifdef HZ_USE_OPENGL_4_5
 		s_Data.QuadShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Quad.glsl");
 		s_Data.CircleShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Circle.glsl");
 		s_Data.LineShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Line.glsl");
+		#elif HZ_USE_OPENGL_3_3
+		s_Data.QuadShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Quad_gl3-3.glsl");
+		s_Data.CircleShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Circle_gl3-3.glsl");
+		s_Data.LineShader = Shader::Create(Application::Get().GetSpecification().WorkingDirectory + "assets/shaders/Renderer2D_Line_gl3-3.glsl");
+		#endif
 
 		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;

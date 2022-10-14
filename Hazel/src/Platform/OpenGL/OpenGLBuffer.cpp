@@ -3,6 +3,8 @@
 
 #include <glad/glad.h>
 
+#include "Platform/OpenGL/GLDebugMacros.h"
+
 namespace Hazel {
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -13,45 +15,53 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glGenBuffers(1, &m_RendererID));
+		#elif HZ_USE_OPENGL_4_5
 		glCreateBuffers(1, &m_RendererID);
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		#endif
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GL_CALL(glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW));
 	}
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
 		HZ_PROFILE_FUNCTION();
 
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glGenBuffers(1, &m_RendererID));
+		#elif HZ_USE_OPENGL_4_5
 		glCreateBuffers(1, &m_RendererID);
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+		#endif
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GL_CALL(glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW));
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glDeleteBuffers(1, &m_RendererID);
+		GL_CALL(glDeleteBuffers(1, &m_RendererID));
 	}
 
 	void OpenGLVertexBuffer::Bind() const
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
 	}
 
 	void OpenGLVertexBuffer::Unbind() const
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GL_CALL(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -63,33 +73,37 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 
+		#ifdef HZ_USE_OPENGL_3_3
+		GL_CALL(glGenBuffers(1, &m_RendererID));
+		#elif HZ_USE_OPENGL_4_5
 		glCreateBuffers(1, &m_RendererID);
+		#endif
 		
 		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
 		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GL_CALL(glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW));
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glDeleteBuffers(1, &m_RendererID);
+		GL_CALL(glDeleteBuffers(1, &m_RendererID));
 	}
 
 	void OpenGLIndexBuffer::Bind() const
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 	}
 
 	void OpenGLIndexBuffer::Unbind() const
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 	}
 
 }

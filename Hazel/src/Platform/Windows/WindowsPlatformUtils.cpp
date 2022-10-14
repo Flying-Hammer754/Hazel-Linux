@@ -23,10 +23,11 @@ namespace Hazel {
 		NFD::Quit();
 	}
 
-	std::string FileDialogs::OpenFile(nfdfilteritem_t* filter, uint32_t count, nfdchar_t* defaultPath)
+	std::string FileDialogs::OpenFile(FilterItem filter, uint32_t count, const char* defaultPath)
 	{
 		nfdchar_t* outPath = "";
-		HZ_CORE_ASSERT(NFD::OpenDialog(outPath, filter, count, defaultPath) != NFD_ERROR, "nfd file open failed!")
+		nfdfilteritem_t filterItem = { filter.VisibleName, filter.FileExtension };
+		HZ_CORE_ASSERT(NFD::OpenDialog(outPath, &filterItem, count, defaultPath) != NFD_ERROR, "nfd file open failed!")
 		std::string result = outPath;
 		return result;
 
@@ -51,10 +52,19 @@ namespace Hazel {
 
 	}
 
-	std::string FileDialogs::SaveFile(nfdfilteritem_t* filter, uint32_t count, nfdchar_t* defaultPath, nfdchar_t* defaultName)
+	std::string FileDialogs::PickFolder(const char* defaultPath)
+	{
+		nfdnchar_t* outPath = "";
+		HZ_CORE_ASSERT(NFD::PickFolder(outPath, defaultPath) != NFD_ERROR, "nfd folder pick failed!")
+		std::string result = outPath;
+		return result;
+	}
+
+	std::string FileDialogs::SaveFile(FilterItem filter, uint32_t count, const char* defaultPath, const char* defaultName)
 	{
 		nfdchar_t* outPath = "";
-		HZ_CORE_ASSERT(NFD::SaveDialog(outPath, filter, count, defaultPath, defaultName) != NFD_ERROR, "nfd file save failed!")
+		nfdfilteritem_t filterItem = { filter.VisibleName, filter.FileExtension };
+		HZ_CORE_ASSERT(NFD::SaveDialog(outPath, &filterItem, count, defaultPath, defaultName) != NFD_ERROR, "nfd file save failed!")
 		std::string result = outPath;
 		return result;
 

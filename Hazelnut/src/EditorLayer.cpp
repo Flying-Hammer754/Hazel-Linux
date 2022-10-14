@@ -538,8 +538,8 @@ namespace Hazel {
 
 	void EditorLayer::OpenScene()
 	{
-		nfdfilteritem_t filter = { "Hazel Scene", "hazel" };
-		std::string filepath = FileDialogs::OpenFile(&filter, 1); //FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		FileDialogs::FilterItem filter = { "Hazel Scene", "hazel" };
+		std::string filepath = FileDialogs::OpenFile(filter, 1); //FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 			OpenScene(filepath);
 	}
@@ -578,8 +578,8 @@ namespace Hazel {
 
 	void EditorLayer::SaveSceneAs()
 	{
-		nfdfilteritem_t filter = { "Hazel Scene", "hazel" };
-		std::string filepath = FileDialogs::SaveFile(&filter, 1); //FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		FileDialogs::FilterItem filter = { "Hazel Scene", "hazel" };
+		std::string filepath = FileDialogs::SaveFile(filter, 1); //FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 		{
 			SerializeScene(m_ActiveScene, filepath);

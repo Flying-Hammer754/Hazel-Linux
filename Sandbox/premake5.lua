@@ -10,9 +10,7 @@ project "Sandbox"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp",
-		"%{IncludeDir.nfd}/nfd.hpp",
-		"%{IncludeDir.nfd}/nfd.h"
+		"src/**.cpp"
 	}
 
 	includedirs
@@ -21,15 +19,22 @@ project "Sandbox"
 		"%{wks.location}/Hazel/src",
 		"%{wks.location}/Hazel/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.nfd}",
-		"%{IncludeDir.openal_soft}"
+		"%{IncludeDir.entt}"
 	}
 
 	links
 	{
-		"Hazel", "Box2d", "GLFW", "Glad", "ImGui", "nfd", "openal-soft"
+		"Hazel", "Box2d", "GLFW", "Glad", "ImGui"
 	}
+
+	filter { "not options:disable-file-dialogs" }
+	files { "%{IncludeDir.nfd}/nfd.hpp", "%{IncludeDir.nfd}/nfd.h" }
+	includedirs { "%{IncludeDir.nfd}" }
+	links { "nfd" }
+	filter { "not options:disable-audio" }
+	includedirs { "%{IncludeDir.openal_soft}" }
+	links { "openal-soft" }
+	filter {}
 
 	filter "system:windows"
 		systemversion "latest"
